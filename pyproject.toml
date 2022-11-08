@@ -32,6 +32,7 @@ pytest-mock = "^3.10.0"
 toml = "^0.10.2"
 types-pyyaml = "^6.0.12.1"
 types-requests = "^2.28.11.2"
+flake8 = "^5.0.4"
 
 [tool.coverage.run]
 source = ["nexus_pcv"]
