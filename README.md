@@ -5,7 +5,7 @@
 
 A CLI tool to perform a pre-change validation on Nexus Dashboard Insights or Network Assurance Engine. It can either work with provided JSON file(s) or a `terraform plan` output from a [Nexus as Code](https://cisco.com/go/nexusascode) project. It waits for the analysis to complete and evaluates the results.
 
-```shell
+```
 $ nexus-pcv -h
 Usage: nexus-pcv [OPTIONS]
 
@@ -51,7 +51,7 @@ Python 3.7+ is required to install `nexus-pcv`. Don't have Python 3.7 or later? 
 
 `nexus-pcv` can be installed in a virtual environment using `pip`:
 
-```shell
+```
 pip install nexus-pcv
 ```
 
@@ -63,7 +63,7 @@ The tool can easily be integrated with CI/CD workflows. Arguments can either be 
 
 *Nexus as Code* allows users to instantiate network fabrics in minutes using an easy to use, opinionated data model. More information about *Nexus as Code* ca be found [here](https://cisco.com/go/nexusascode). A planned changed can be validated before applying it to a production environment by running a `terraform plan` operation first and than providing the output to `nexus-pcv` to trigger and evaluate the pre-change validation.
 
-```shell
+```
 export PCV_HOSTNAME_IP=10.1.1.1
 export PCV_USERNAME=admin
 export PCV_PASSWORD=Cisco123
