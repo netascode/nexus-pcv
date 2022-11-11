@@ -57,11 +57,11 @@ pip install nexus-pcv
 
 ## CI/CD Integration
 
-The tool can easily be integrated with CI/CD workflows. Arguments can either be provided via command line or environment variables. The tool will exit with a non-zero code in case of an error or non-suppressed events being discovered during the pre-change analysis. The `--output-summary` and `--output-url` arguments can be used to write a summary and/or a link (URL) to a file, which can then be embedded into notifications (e.g., Webex).
+The tool can easily be integrated with CI/CD workflows. Arguments can either be provided via command line or environment variables. The tool will exit with a non-zero exit code in case of an error or non-suppressed events being discovered during the pre-change analysis. The `--output-summary` and `--output-url` arguments can be used to write a summary and/or a link (URL) to a file, which can then be embedded into notifications (e.g., Webex).
 
 ## *Nexus as Code* Integration
 
-*Nexus as Code* allows users to instantiate network fabrics in minutes using an easy to use, opinionated data model. More information about *Nexus as Code* ca be found [here](https://cisco.com/go/nexusascode). A planned changed can be validated before applying it to a production environment by running a `terraform plan` operation first and than providing the output to `nexus-pcv` to trigger and evaluate the pre-change validation.
+*Nexus as Code* allows users to instantiate network fabrics in minutes using an easy to use, opinionated data model. More information about *Nexus as Code* can be found [here](https://cisco.com/go/nexusascode). A planned change can be validated before applying it to a production environment by running a `terraform plan` operation first and then providing the output to `nexus-pcv` to trigger a pre-change validation.
 
 ```
 export PCV_HOSTNAME_IP=10.1.1.1
