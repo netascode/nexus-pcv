@@ -186,7 +186,7 @@ class PCV:
         err, url = self.ndi.get_pcv_url()
         if err is not None:
             return err, None, None
-        if file_summary and events is not None:
+        if file_summary and events:
             self._write_pcv_events(events, file_summary)
         if file_url and url is not None:
             self._write_pcv_url(url, file_summary)
@@ -217,7 +217,7 @@ class PCV:
         err, url = self.nae.get_pcv_url(str(job_id))
         if err is not None:
             return err, None, None
-        if file_summary and events is not None:
+        if file_summary and events:
             self._write_pcv_events(events, file_summary)
         if file_url and url is not None:
             self._write_pcv_url(url, file_url)

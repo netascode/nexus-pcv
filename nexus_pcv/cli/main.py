@@ -87,14 +87,9 @@ def main(
     if nac_tf_plan:
         pcv.load_tf_plan(nac_tf_plan)
     if platform is PCV.Platform.NDI:
-        err = pcv.ndi_pcv(
-            name, group, site, suppress_events, output_summary, output_url
-        )
+        pcv.ndi_pcv(name, group, site, suppress_events, output_summary, output_url)
     else:
-        err = pcv.nae_pcv(name, group, suppress_events, output_summary, output_url)
-    if err is not None:
-        sys.exit(1)
-
+        pcv.nae_pcv(name, group, suppress_events, output_summary, output_url)
     exit()
 
 

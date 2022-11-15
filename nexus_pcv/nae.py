@@ -263,9 +263,12 @@ class NAE:
         except KeyError:
             logger.error("Could not find events: {}".format(resp.json()))
             return resp, None
-        logger.info(
-            "The following events have been raised:\n{}".format(yaml.dump(event_list))
-        )
+        if event_list:
+            logger.error(
+                "The following events have been raised:\n{}".format(
+                    yaml.dump(event_list)
+                )
+            )
         return None, event_list
 
     def get_pcv_url(
