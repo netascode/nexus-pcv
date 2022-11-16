@@ -1,3 +1,7 @@
+# 0.1.2 (unreleased)
+
+- Fix URL output for NDI
+
 # 0.1.1
 
 - Fix error handling and exit codes

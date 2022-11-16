@@ -189,7 +189,7 @@ class PCV:
         if file_summary and events:
             self._write_pcv_events(events, file_summary)
         if file_url and url is not None:
-            self._write_pcv_url(url, file_summary)
+            self._write_pcv_url(url, file_url)
         return None, events, url
 
     def nae_pcv(
