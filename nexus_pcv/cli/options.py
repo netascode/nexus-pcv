@@ -94,7 +94,6 @@ name = click.option(
 )
 
 timeout = click.option(
-    "-t",
     "--timeout",
     type=int,
     default=15,
@@ -104,7 +103,6 @@ timeout = click.option(
 )
 
 suppress_events = click.option(
-    "-s",
     "--suppress-events",
     type=str,
     envvar="PCV_SUPPRESS_EVENTS",
