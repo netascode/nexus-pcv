@@ -841,14 +841,14 @@ types-urllib3 = "<1.27"
 
 [[package]]
 name = "types-urllib3"
-version = "1.26.25.9"
+version = "1.26.25.10"
 description = "Typing stubs for urllib3"
 category = "dev"
 optional = false
 python-versions = "*"
 files = [
-    {file = "types-urllib3-1.26.25.9.tar.gz", hash = "sha256:160727879bdbe52f11f5feeca092a473f38d68ed3be88abb461b59cda40fb9bc"},
-    {file = "types_urllib3-1.26.25.9-py3-none-any.whl", hash = "sha256:b327d360ba4a9edd80ea82f5990ba19e76175a20b5b64be4b4813d9a1c424caa"},
+    {file = "types-urllib3-1.26.25.10.tar.gz", hash = "sha256:c44881cde9fc8256d05ad6b21f50c4681eb20092552351570ab0a8a0653286d6"},
+    {file = "types_urllib3-1.26.25.10-py3-none-any.whl", hash = "sha256:12c744609d588340a07e45d333bf870069fc8793bcf96bae7a96d4712a42591d"},
 ]
 
 [[package]]
