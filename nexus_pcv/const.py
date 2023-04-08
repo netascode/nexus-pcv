@@ -9,6 +9,18 @@ RN_PREFIX_CLASSNAME_MAPPINGS: Dict[str, Dict[str, Any]] = {
     "uni": {
         "class": "polUni",
     },
+    "userext": {
+        "class": "aaaUserEp",
+    },
+    "fabric": {
+        "class": "fabricInst",
+    },
+    "hsPols": {
+        "class": "healthPolCont",
+    },
+    "infra": {
+        "class": "infraInfra",
+    },
     "tn": {
         "class": "fvTenant",
         "keys": [
