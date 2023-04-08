@@ -1,3 +1,7 @@
+# 0.1.4 (unreleased)
+
+- Improve resolution of missing classnames and key attributes
+
 # 0.1.3
 
 - Fix overlapping CLI arguments (`-s` and `-t`)

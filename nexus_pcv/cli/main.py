@@ -86,6 +86,8 @@ def main(
         pcv.load_json_files(file)
     if nac_tf_plan:
         pcv.load_tf_plan(nac_tf_plan)
+    if error_handler.fired:
+        exit()
     if platform is PCV.Platform.NDI:
         pcv.ndi_pcv(name, group, site, suppress_events, output_summary, output_url)
     else:

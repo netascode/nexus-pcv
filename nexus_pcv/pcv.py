@@ -52,23 +52,37 @@ class PCV:
                 )
                 plan_dn = change["change"].get(section, {}).get("dn")
                 if dn == plan_dn:
+                    logger.debug(
+                        "Resolving classname from Terraform plan for '{}'".format(dn)
+                    )
                     root.cl = change["change"].get(section, {}).get("class_name")
-                    root.attributes["name"] = (
+                    name = (
                         change["change"].get(section, {}).get("content", {}).get("name")
                     )
+                    if name:
+                        logger.debug(
+                            "Resolving name attribute from Terraform plan for '{}'".format(
+                                dn
+                            )
+                        )
+                        root.attributes["name"] = name
 
         for child in root.children:
             self._resolve_tf_classnames(child, tf_plan)
 
-    def _resolve_static_classnames(self, root: ApicObject) -> Optional[str]:
+    def _resolve_static_classnames(self, root: ApicObject) -> None:
         """Helper function to resolve missing class names and key attributes using static mappings"""
-        if root.cl is None:
-            parts = str(root["dn"]).split("/")[-1].split("-", 1)
-            prefix = parts[0]
-            name = parts[1] if len(parts) > 1 else None
-            if prefix in RN_PREFIX_CLASSNAME_MAPPINGS:
-                mapping = RN_PREFIX_CLASSNAME_MAPPINGS[prefix]
+        parts = str(root["dn"]).split("/")[-1].split("-", 1)
+        prefix = parts[0]
+        name = parts[1] if len(parts) > 1 else None
+        if prefix in RN_PREFIX_CLASSNAME_MAPPINGS:
+            mapping = RN_PREFIX_CLASSNAME_MAPPINGS[prefix]
+            if root.cl is None:
+                logger.debug(
+                    "Statically resolving classname for '{}'".format(root["dn"])
+                )
                 root.cl = mapping.get("class")
+            if root.cl == mapping.get("class"):
                 for key in mapping.get("keys", []):
                     key_attribute = key.get("attribute")
                     key_regex = key.get("regex")
@@ -79,13 +93,22 @@ class PCV:
                     ):
                         regex = re.compile(key_regex)
                         mo = regex.search(name)
-                        if mo is not None:
+                        if mo is not None and key_attribute not in root.attributes:
+                            logger.debug(
+                                "Statically adding key attribute '{}' for '{}'".format(
+                                    key_attribute, root["dn"]
+                                )
+                            )
                             root.attributes[key_attribute] = mo.group()
-            if root.cl is None:
-                return str(root["dn"])
         for child in root.children:
             self._resolve_static_classnames(child)
-        return None
+
+    def _check_classes(self, root: ApicObject) -> None:
+        """Helper function to verify if all objects have classnames"""
+        if root.cl is None:
+            logger.error("Missing classname for '{}'".format(root["dn"]))
+        for child in root.children:
+            self._check_classes(child)
 
     def _load_json_objects(
         self, json_dict: Dict[Any, Any], parent: Optional[ApicObject] = None
@@ -100,7 +123,7 @@ class PCV:
                 self._load_json_objects(child, new_obj)
         return new_obj
 
-    def load_json_files(self, filenames: List[str]) -> Optional[str]:
+    def load_json_files(self, filenames: List[str]) -> None:
         """Load objects from JSON files into object tree"""
         for filename in filenames:
             try:
@@ -115,12 +138,10 @@ class PCV:
                         self.root.insert(obj)
             except:  # noqa E722
                 logger.error("Failed to load JSON file: {}".format(filename))
-        err = self._resolve_static_classnames(self.root)
-        if err is not None:
-            return err
-        return None
+        self._resolve_static_classnames(self.root)
+        self._check_classes(self.root)
 
-    def load_tf_plan(self, filename: str) -> Optional[str]:
+    def load_tf_plan(self, filename: str) -> None:
         """Load changed objects from Terraform plan into object tree"""
         tf_plan = None
         with open(filename) as file:
@@ -144,11 +165,9 @@ class PCV:
                     obj = ApicObject(classname, attributes, [], None)
                     self.root.insert(obj)
 
-        err = self._resolve_static_classnames(self.root)
-        if err is not None:
-            return err
+        self._resolve_static_classnames(self.root)
         self._resolve_tf_classnames(self.root, tf_plan)
-        return None
+        self._check_classes(self.root)
 
     def _write_pcv_events(self, events: List[Any], file: str) -> None:
         with open(file, "w") as fh:
