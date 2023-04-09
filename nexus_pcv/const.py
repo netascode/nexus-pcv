@@ -277,4 +277,13 @@ RN_PREFIX_CLASSNAME_MAPPINGS: Dict[str, Dict[str, Any]] = {
             }
         ],
     },
+    "format": {
+        "class": "datetimeFormat",
+        "keys": [
+            {
+                "attribute": "name",
+                "regex": ".*",
+            }
+        ],
+    },
 }
