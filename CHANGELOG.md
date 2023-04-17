@@ -1,3 +1,7 @@
+# 0.1.5 (unreleased)
+
+- Further improve resolution of missing classnames and key attributes
+
 # 0.1.4
 
 - Improve resolution of missing classnames and key attributes
