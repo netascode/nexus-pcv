@@ -76,14 +76,14 @@ class ApicObject:
 
     def _index_of_last_dn_delimiter(self, dn: str) -> int:
         """Helper function to return index of last delimiter ('/') in DN string"""
-        escaped = False
+        escaped = 0
         index = len(dn) - 1
         for c in reversed(dn):
             if c == "]":
-                escaped = True
+                escaped += 1
             elif c == "[":
-                escaped = False
-            elif c == "/" and not escaped:
+                escaped -= 1
+            elif c == "/" and escaped == 0:
                 return index
             index -= 1
         return -1
