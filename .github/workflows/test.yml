@@ -35,7 +35,7 @@ jobs:
           poetry run pytest
 
       - name: Webex Notification
-        if: always()
+        if: always() && github.event_name != 'pull_request'
         uses: qsnyder/action-wxt@master
         env:
           TOKEN: ${{ secrets.WEBEX_TOKEN }}
