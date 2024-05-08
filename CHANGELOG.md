@@ -1,4 +1,4 @@
-# 0.1.6 (unreleased)
+# 0.1.6
 
 - Update NDI anomaly query URL to work with ND 3.0+
 
