@@ -1,3 +1,7 @@
+# 0.1.6 (unreleased)
+
+- Update NDI anomaly query URL to work with ND 3.0+
+
 # 0.1.5
 
 - Further improve resolution of missing classnames and key attributes

@@ -181,7 +181,7 @@ class NDI:
 
         suppress_events_list = suppress_events.split(",")
 
-        url = "{}/epochDelta/insightsGroup/{}/fabric/{}/job/{}/health/view/aggregateTable?category=ADC,CHANGE_ANALYSIS,TENANT_ENDPOINT,TENANT_FORWARDING,TENANT_SECURITY,RESOURCE_UTILIZATION,SYSTEM,COMPLIANCE&epochStatus=EPOCH2_ONLY&severity=EVENT_SEVERITY_CRITICAL,EVENT_SEVERITY_MAJOR,EVENT_SEVERITY_MINOR,EVENT_SEVERITY_WARNING,EVENT_SEVERITY_INFO".format(
+        url = "{}/epochDelta/insightsGroup/{}/fabric/{}/job/{}/health/view/aggregateTable?epochStatus=EPOCH2_ONLY".format(
             self.api_url, group, site, epoch_job_id
         )
         resp = self.session.get(url)
