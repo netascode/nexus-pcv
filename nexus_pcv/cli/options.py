@@ -36,7 +36,7 @@ hostname_ip = click.option(
     "--hostname-ip",
     type=str,
     envvar="PCV_HOSTNAME_IP",
-    help="NAE/ND hostname or IP (required, env: PCV_HOSTNAME_IP).",
+    help="ND hostname or IP (required, env: PCV_HOSTNAME_IP).",
 )
 
 username = click.option(
@@ -44,7 +44,7 @@ username = click.option(
     "--username",
     type=str,
     envvar="PCV_USERNAME",
-    help="NAE/ND username (required, env: PCV_USERNAME).",
+    help="ND username (required, env: PCV_USERNAME).",
 )
 
 password = click.option(
@@ -52,7 +52,7 @@ password = click.option(
     "--password",
     type=str,
     envvar="PCV_PASSWORD",
-    help="NAE/ND password (required, env: PCV_PASSWORD).",
+    help="ND password (required, env: PCV_PASSWORD).",
     prompt=True,
     hide_input=True,
     confirmation_prompt=True,
@@ -62,9 +62,9 @@ domain = click.option(
     "-d",
     "--domain",
     type=str,
-    default="Local",
+    default="local",
     envvar="PCV_DOMAIN",
-    help="NAE/ND login domain (optional, default: 'Local/local', env: PCV_DOMAIN).",
+    help="ND login domain (optional, default: 'local', env: PCV_DOMAIN).",
     required=False,
 )
 
@@ -72,8 +72,9 @@ group = click.option(
     "-g",
     "--group",
     type=str,
+    default="default",
     envvar="PCV_GROUP",
-    help="NAE assurance group name or NDI insights group name (required, env: PCV_GROUP).",
+    help="NDI insights group name (optional, default: 'default', env: PCV_GROUP).",
 )
 
 site = click.option(
@@ -81,8 +82,7 @@ site = click.option(
     "--site",
     type=str,
     envvar="PCV_SITE",
-    help="NDI site or fabric name (optional, only required for NDI, env: PCV_SITE).",
-    required=False,
+    help="NDI site or fabric name (required, env: PCV_SITE).",
 )
 
 name = click.option(
@@ -90,7 +90,7 @@ name = click.option(
     "--name",
     type=str,
     envvar="PCV_NAME",
-    help="NAE/NDI pre-change validation name (optional, env: PCV_NAME).",
+    help="NDI pre-change validation name (optional, env: PCV_NAME).",
 )
 
 timeout = click.option(
@@ -98,7 +98,7 @@ timeout = click.option(
     type=int,
     default=15,
     envvar="PCV_TIMEOUT",
-    help="NAE/NDI pre-change validation timeout in minutes (optional, default: 15, env: PCV_TIMEOUT).",
+    help="NDI pre-change validation timeout in minutes (optional, default: 15, env: PCV_TIMEOUT).",
     required=False,
 )
 
@@ -107,7 +107,7 @@ suppress_events = click.option(
     type=str,
     envvar="PCV_SUPPRESS_EVENTS",
     default="APP_EPG_NOT_DEPLOYED,APP_EPG_HAS_NO_CONTRACT_IN_ENFORCED_VRF",
-    help="NAE/NDI comma-separated list of events to suppress (optional, default: 'APP_EPG_NOT_DEPLOYED,APP_EPG_HAS_NO_CONTRACT_IN_ENFORCED_VRF', env: PCV_SUPPRESS_EVENTS).",
+    help="NDI comma-separated list of events to suppress (optional, default: 'APP_EPG_NOT_DEPLOYED,APP_EPG_HAS_NO_CONTRACT_IN_ENFORCED_VRF', env: PCV_SUPPRESS_EVENTS).",
 )
 
 
@@ -118,7 +118,7 @@ file = click.option(
     type=click.Path(exists=True, dir_okay=False, file_okay=True),
     multiple=True,
     envvar="PCV_FILE",
-    help="NAE/NDI proposed change JSON file (optional, env: PCV_FILE).",
+    help="NDI proposed change JSON file (optional, env: PCV_FILE).",
 )
 
 nac_tf_plan = click.option(
@@ -127,7 +127,7 @@ nac_tf_plan = click.option(
     cls=MutuallyExclusiveOption,
     type=click.Path(exists=True, dir_okay=False, file_okay=True),
     envvar="PCV_NAC_TF_PLAN",
-    help="NAE/NDI proposed change Terraform plan output (optional, env: PCV_NAC_TF_PLAN).",
+    help="NDI proposed change Terraform plan output (optional, env: PCV_NAC_TF_PLAN).",
 )
 
 output_summary = click.option(
@@ -135,7 +135,7 @@ output_summary = click.option(
     "--output-summary",
     type=click.Path(exists=False, dir_okay=False, file_okay=True),
     envvar="PCV_OUTPUT_SUMMARY",
-    help="NAE/NDI summary of new events/anomalies written to a file (optional, env: PCV_OUTPUT_SUMMARY).",
+    help="NDI summary of new events/anomalies written to a file (optional, env: PCV_OUTPUT_SUMMARY).",
     required=False,
 )
 
@@ -144,6 +144,6 @@ output_url = click.option(
     "--output-url",
     type=click.Path(exists=False, dir_okay=False, file_okay=True),
     envvar="PCV_OUTPUT_URL",
-    help="NAE/NDI link (URL) to pre-change validation results written to a file (optional, env: PCV_OUTPUT_URL).",
+    help="NDI link (URL) to pre-change validation results written to a file (optional, env: PCV_OUTPUT_URL).",
     required=False,
 )

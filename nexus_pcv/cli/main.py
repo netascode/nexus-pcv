@@ -77,21 +77,17 @@ def main(
     output_summary: str,
     output_url: str,
 ) -> None:
-    """A CLI tool to perform a pre-change validation on Nexus Dashboard Insights or Network Assurance Engine."""
+    """A CLI tool to perform a pre-change validation on Nexus Dashboard Insights."""
     configure_logging(verbosity)
 
-    platform = PCV.Platform.NDI if site else PCV.Platform.NAE
-    pcv = PCV(hostname_ip, username, password, domain, timeout, platform)
+    pcv = PCV(hostname_ip, username, password, domain, timeout)
     if file:
         pcv.load_json_files(file)
     if nac_tf_plan:
         pcv.load_tf_plan(nac_tf_plan)
     if error_handler.fired:
         exit()
-    if platform is PCV.Platform.NDI:
-        pcv.ndi_pcv(name, group, site, suppress_events, output_summary, output_url)
-    else:
-        pcv.nae_pcv(name, group, suppress_events, output_summary, output_url)
+    pcv.ndi_pcv(name, group, site, suppress_events, output_summary, output_url)
     exit()
 
 

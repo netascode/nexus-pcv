@@ -29,10 +29,7 @@ class NDI:
         )
         self.username = username
         self.password = password
-        if domain == "Local":
-            self.domain = "local"
-        else:
-            self.domain = domain
+        self.domain = domain
         self.timeout = timeout
         self.session = requests.Session()
         self.session.verify = False

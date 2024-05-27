@@ -1,48 +1,47 @@
 [![Tests](https://github.com/netascode/nexus-pcv/actions/workflows/test.yml/badge.svg)](https://github.com/netascode/nexus-pcv/actions/workflows/test.yml)
-![Python Support](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10-informational "Python Support: 3.7, 3.8, 3.9, 3.10")
+![Python Support](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-informational "Python Support: 3.8, 3.9, 3.10, 3.11, 3.12")
 
 # nexus-pcv
 
-A CLI tool to perform a pre-change validation on Nexus Dashboard Insights or Network Assurance Engine. It can either work with provided JSON file(s) or a `terraform plan` output from a [Nexus as Code](https://cisco.com/go/nexusascode) project. It waits for the analysis to complete and evaluates the results.
+A CLI tool to perform a pre-change validation on Nexus Dashboard Insights. It can either work with provided JSON file(s) or a `terraform plan` output from a [Nexus as Code](https://cisco.com/go/nexusascode) project. It waits for the analysis to complete and evaluates the results.
 
 ```
 $ nexus-pcv -h
 Usage: nexus-pcv [OPTIONS]
 
-  A CLI tool to perform a pre-change validation on Nexus Dashboard Insights or
-  Network Assurance Engine.
+  A CLI tool to perform a pre-change validation on Nexus Dashboard Insights.
 
 Options:
-  --version                   Show the version and exit.
-  -v, --verbosity LVL         Either CRITICAL, ERROR, WARNING, INFO or DEBUG.
-  -i, --hostname-ip TEXT      NAE/ND hostname or IP (required, env:
-                              PCV_HOSTNAME_IP).
-  -u, --username TEXT         NAE/ND username (required, env: PCV_USERNAME).
-  -p, --password TEXT         NAE/ND password (required, env: PCV_PASSWORD).
-  -d, --domain TEXT           NAE/ND login domain (optional, default: 'Local',
-                              env: PCV_DOMAIN).
-  -g, --group TEXT            NAE assurance group name or NDI insights group
-                              name (required, env: PCV_GROUP).
-  -s, --site TEXT             NDI site or fabric name (optional, only required
-                              for NDI, env: PCV_SITE).
-  -n, --name TEXT             NAE/NDI pre-change validation name (optional,
-                              env: PCV_NAME).
-  -s, --suppress-events TEXT  NAE/NDI comma-separated list of events to
-                              suppress (optional, default: 'APP_EPG_NOT_DEPLOY
-                              ED,APP_EPG_HAS_NO_CONTRACT_IN_ENFORCED_VRF',
-                              env: PCV_SUPPRESS_EVENTS).
-  -t, --timeout INTEGER       NAE/NDI pre-change validation timeout in minutes
-                              (optional, default: 15, env: PCV_TIMEOUT).
-  -f, --file FILE             NAE/NDI proposed change JSON file (optional,
-                              env: PCV_FILE).
-  -t, --nac-tf-plan FILE      NAE/NDI proposed change Terraform plan output
-                              (optional, env: PCV_NAC_TF_PLAN).
-  -o, --output-summary FILE   NAE/NDI summary of new events/anomalies written
-                              to a file (optional, env: PCV_OUTPUT_SUMMARY).
-  -r, --output-url FILE       NAE/NDI link (URL) to pre-change validation
-                              results written to a file (optional, env:
-                              PCV_OUTPUT_URL).
-  -h, --help                  Show this message and exit.
+  --version                  Show the version and exit.
+  -v, --verbosity LVL        Either CRITICAL, ERROR, WARNING, INFO or DEBUG.
+  -i, --hostname-ip TEXT     ND hostname or IP (required, env:
+                             PCV_HOSTNAME_IP).
+  -u, --username TEXT        ND username (required, env: PCV_USERNAME).
+  -p, --password TEXT        ND password (required, env: PCV_PASSWORD).
+  -d, --domain TEXT          ND login domain (optional, default:
+                             'Local/local', env: PCV_DOMAIN).
+  -g, --group TEXT           NDI insights group name (optional, default:
+                             'default', env: PCV_GROUP).
+  -s, --site TEXT            NDI site or fabric name (required, env:
+                             PCV_SITE).
+  -n, --name TEXT            NDI pre-change validation name (optional, env:
+                             PCV_NAME).
+  --suppress-events TEXT     NDI comma-separated list of events to suppress
+                             (optional, default: 'APP_EPG_NOT_DEPLOYED,APP_EPG
+                             _HAS_NO_CONTRACT_IN_ENFORCED_VRF', env:
+                             PCV_SUPPRESS_EVENTS).
+  --timeout INTEGER          NDI pre-change validation timeout in minutes
+                             (optional, default: 15, env: PCV_TIMEOUT).
+  -f, --file FILE            NDI proposed change JSON file (optional, env:
+                             PCV_FILE).
+  -t, --nac-tf-plan FILE     NDI proposed change Terraform plan output
+                             (optional, env: PCV_NAC_TF_PLAN).
+  -o, --output-summary FILE  NDI summary of new events/anomalies written to a
+                             file (optional, env: PCV_OUTPUT_SUMMARY).
+  -r, --output-url FILE      NDI link (URL) to pre-change validation results
+                             written to a file (optional, env:
+                             PCV_OUTPUT_URL).
+  -h, --help                 Show this message and exit.
 ```
 
 ## Installation

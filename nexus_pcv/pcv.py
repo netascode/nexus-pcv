@@ -2,7 +2,6 @@
 
 # Copyright: (c) 2022, Daniel Schmidt <danischm@cisco.com>
 
-from enum import Enum
 import json
 import logging
 import re
@@ -14,17 +13,12 @@ import yaml
 
 from .apic import ApicObject
 from .const import RN_PREFIX_CLASSNAME_MAPPINGS
-from .nae import NAE
 from .ndi import NDI
 
 logger = logging.getLogger(__name__)
 
 
 class PCV:
-    class Platform(Enum):
-        NDI = 1
-        NAE = 2
-
     def __init__(
         self,
         hostname_ip: str,
@@ -32,13 +26,8 @@ class PCV:
         password: str,
         domain: str,
         timeout: int,
-        platform: Platform,
     ):
-        self.platform = platform
-        if platform is self.Platform.NDI:
-            self.ndi = NDI(hostname_ip, username, password, domain, timeout)
-        elif platform is self.Platform.NAE:
-            self.nae = NAE(hostname_ip, username, password, domain, timeout)
+        self.ndi = NDI(hostname_ip, username, password, domain, timeout)
         self.root = ApicObject("root", {}, [], None)
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -203,37 +192,6 @@ class PCV:
         if err is not None:
             return err, None, None
         err, url = self.ndi.get_pcv_url()
-        if err is not None:
-            return err, None, None
-        if file_summary and events:
-            self._write_pcv_events(events, file_summary)
-        if file_url and url is not None:
-            self._write_pcv_url(url, file_url)
-        return None, events, url
-
-    def nae_pcv(
-        self,
-        name: str,
-        group: str,
-        suppress_events: str,
-        file_summary: str,
-        file_url: str,
-    ) -> Tuple[Optional[requests.Response], Optional[List[Any]], Optional[str]]:
-        """Trigger an NAE pre-change validation"""
-        if not len(self.root.children):
-            logger.info("No updates planned. No need to trigger a pre-change analysis.")
-            return None, None, None
-        logger.debug("Proposed change (JSON): {}".format(self.root[0]))
-        err, job_id = self.nae.start_pcv(name, group, str(self.root[0]))
-        if err is not None:
-            return err, None, None
-        err, epoch_job_id = self.nae.wait_pcv(str(job_id))
-        if err is not None:
-            return err, None, None
-        err, events = self.nae.get_pcv_results(str(epoch_job_id), suppress_events)
-        if err is not None:
-            return err, None, None
-        err, url = self.nae.get_pcv_url(str(job_id))
         if err is not None:
             return err, None, None
         if file_summary and events:
