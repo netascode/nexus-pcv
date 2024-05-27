@@ -18,8 +18,8 @@ Options:
                              PCV_HOSTNAME_IP).
   -u, --username TEXT        ND username (required, env: PCV_USERNAME).
   -p, --password TEXT        ND password (required, env: PCV_PASSWORD).
-  -d, --domain TEXT          ND login domain (optional, default:
-                             'Local/local', env: PCV_DOMAIN).
+  -d, --domain TEXT          ND login domain (optional, default: 'local', env:
+                             PCV_DOMAIN).
   -g, --group TEXT           NDI insights group name (optional, default:
                              'default', env: PCV_GROUP).
   -s, --site TEXT            NDI site or fabric name (required, env:
