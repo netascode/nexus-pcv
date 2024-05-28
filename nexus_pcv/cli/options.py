@@ -37,6 +37,7 @@ hostname_ip = click.option(
     type=str,
     envvar="PCV_HOSTNAME_IP",
     help="ND hostname or IP (required, env: PCV_HOSTNAME_IP).",
+    required=True,
 )
 
 username = click.option(
@@ -45,6 +46,7 @@ username = click.option(
     type=str,
     envvar="PCV_USERNAME",
     help="ND username (required, env: PCV_USERNAME).",
+    required=True,
 )
 
 password = click.option(
@@ -56,6 +58,7 @@ password = click.option(
     prompt=True,
     hide_input=True,
     confirmation_prompt=True,
+    required=True,
 )
 
 domain = click.option(
@@ -75,6 +78,7 @@ group = click.option(
     default="default",
     envvar="PCV_GROUP",
     help="NDI insights group name (optional, default: 'default', env: PCV_GROUP).",
+    required=False,
 )
 
 site = click.option(
@@ -83,6 +87,7 @@ site = click.option(
     type=str,
     envvar="PCV_SITE",
     help="NDI site or fabric name (required, env: PCV_SITE).",
+    required=True,
 )
 
 name = click.option(
@@ -90,7 +95,8 @@ name = click.option(
     "--name",
     type=str,
     envvar="PCV_NAME",
-    help="NDI pre-change validation name (optional, env: PCV_NAME).",
+    help="NDI pre-change validation name (required, env: PCV_NAME).",
+    required=True,
 )
 
 timeout = click.option(
@@ -108,6 +114,7 @@ suppress_events = click.option(
     envvar="PCV_SUPPRESS_EVENTS",
     default="APP_EPG_NOT_DEPLOYED,APP_EPG_HAS_NO_CONTRACT_IN_ENFORCED_VRF",
     help="NDI comma-separated list of events to suppress (optional, default: 'APP_EPG_NOT_DEPLOYED,APP_EPG_HAS_NO_CONTRACT_IN_ENFORCED_VRF', env: PCV_SUPPRESS_EVENTS).",
+    required=False,
 )
 
 
@@ -119,6 +126,7 @@ file = click.option(
     multiple=True,
     envvar="PCV_FILE",
     help="NDI proposed change JSON file (optional, env: PCV_FILE).",
+    required=False,
 )
 
 nac_tf_plan = click.option(
@@ -128,6 +136,7 @@ nac_tf_plan = click.option(
     type=click.Path(exists=True, dir_okay=False, file_okay=True),
     envvar="PCV_NAC_TF_PLAN",
     help="NDI proposed change Terraform plan output (optional, env: PCV_NAC_TF_PLAN).",
+    required=False,
 )
 
 output_summary = click.option(
