@@ -1,4 +1,4 @@
-# 0.2.0 (unreleased)
+# 0.2.0
 
 - Drop support for NAE (Network Assurance Engine)
 - Drop support for Python 3.7
