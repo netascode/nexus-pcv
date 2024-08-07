@@ -2,9 +2,6 @@
 
 # Copyright: (c) 2022, Daniel Schmidt <danischm@cisco.com>
 
-from importlib.metadata import PackageNotFoundError, version  # type: ignore
+from importlib.metadata import version  # type: ignore
 
-try:
-    __version__ = version(__name__)
-except PackageNotFoundError:  # pragma: no cover
-    __version__ = "unknown"
+__version__ = version(__name__)
