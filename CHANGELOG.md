@@ -1,3 +1,7 @@
+# 0.2.1 (unreleased)
+
+- Fix issue with Terraform resource attributes set to `null`
+
 # 0.2.0
 
 - Drop support for NAE (Network Assurance Engine)

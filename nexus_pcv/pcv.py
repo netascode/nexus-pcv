@@ -150,7 +150,11 @@ class PCV:
                         classname = change["change"].get("after", {}).get("class_name")
                         attributes = change["change"].get("after", {}).get("content")
                         attributes["dn"] = change["change"].get("after", {}).get("dn")
-                    attributes = {k: v for (k, v) in attributes.items() if v != ""}
+                    attributes = {
+                        k: v
+                        for (k, v) in attributes.items()
+                        if v != "" and v is not None
+                    }
                     obj = ApicObject(classname, attributes, [], None)
                     self.root.insert(obj)
 
