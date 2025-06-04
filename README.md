@@ -3,7 +3,7 @@
 
 # nexus-pcv
 
-A CLI tool to perform a pre-change validation on Nexus Dashboard Insights. It can either work with provided JSON file(s) or a `terraform plan` output from a [Nexus as Code](https://cisco.com/go/nexusascode) project. It waits for the analysis to complete and evaluates the results.
+A CLI tool to perform a pre-change validation on Nexus Dashboard Insights. It can either work with provided JSON file(s) or a `terraform plan` output from a [Network as Code](https://netascode.cisco.com) project. It waits for the analysis to complete and evaluates the results.
 
 ```
 $ nexus-pcv -h
@@ -58,9 +58,9 @@ pip install nexus-pcv
 
 The tool can easily be integrated with CI/CD workflows. Arguments can either be provided via command line or environment variables. The tool will exit with a non-zero exit code in case of an error or non-suppressed events being discovered during the pre-change analysis. The `--output-summary` and `--output-url` arguments can be used to write a summary and/or a link (URL) to a file, which can then be embedded into notifications (e.g., Webex).
 
-## *Nexus as Code* Integration
+## *Network as Code* Integration
 
-*Nexus as Code* allows users to instantiate network fabrics in minutes using an easy to use, opinionated data model. More information about *Nexus as Code* can be found [here](https://cisco.com/go/nexusascode). A planned change can be validated before applying it to a production environment by running a `terraform plan` operation first and then providing the output to `nexus-pcv` to trigger a pre-change validation.
+*Network as Code* for ACI allows users to instantiate network fabrics in minutes using an easy to use, opinionated data model. More information about *Network as Code* can be found [here](https://netascode.cisco.com). A planned change can be validated before applying it to a production environment by running a `terraform plan` operation first and then providing the output to `nexus-pcv` to trigger a pre-change validation.
 
 ```
 export PCV_HOSTNAME_IP=10.1.1.1
