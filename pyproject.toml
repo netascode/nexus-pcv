@@ -11,10 +11,24 @@ authors = [
 maintainers = [
     { name = "Daniel Schmidt", email = "danischm@cisco.com" },
 ]
+keywords = ["nexus", "dashboard", "insights", "validation", "pre-change", "cli"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Testing",
+]
 dependencies = [
-    "typer>=0.15",
+    "typer>=0.17.4",
     "pyyaml>=6.0.2",
-    "httpx>=0.28",
+    "httpx>=0.29.7",
 ]
 
 [project.urls]
@@ -27,13 +41,13 @@ nexus-pcv = "nexus_pcv.cli.main:app"
 
 [project.optional-dependencies]
 dev = [
-    "bandit[toml]>=1.7.0",
+    "bandit[toml]>=1.8.6",
     "mypy>=1.17",
-    "pre-commit>=4.0",
+    "pre-commit>=4.3",
     "pytest>=8.4",
-    "pytest-cov>=6.0",
+    "pytest-cov>=6.2",
     "pytest-mock>=3.15",
-    "ruff>=0.12",
+    "ruff>=0.12.12",
     "types-pyyaml>=6.0.12.20250822",
 ]
 
@@ -53,12 +67,14 @@ disallow_untyped_decorators = false
 disallow_untyped_defs = true
 ignore_errors = false
 ignore_missing_imports = true
-python_version = "3.13"
+python_version = "3.10"
 strict_optional = true
 warn_redundant_casts = true
 warn_return_any = true
 warn_unused_configs = true
 warn_unused_ignores = false
+warn_unreachable = true
+show_error_context = true
 
 [tool.pytest.ini_options]
 markers = ["unit", "integration"]
@@ -80,6 +96,9 @@ select = [
 ignore = [
     "E501",   # line too long (handled by formatter)
 ]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["nexus_pcv"]
