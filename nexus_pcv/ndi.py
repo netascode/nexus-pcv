@@ -8,7 +8,7 @@ import logging
 import time
 from typing import Any, List, Optional, Tuple
 
-import requests
+import httpx
 import yaml
 
 logger = logging.getLogger(__name__)
@@ -31,12 +31,12 @@ class NDI:
         self.password = password
         self.domain = domain
         self.timeout = timeout
-        self.session = requests.Session()
-        self.session.verify = False
+        self.session = httpx.Client(verify=False)
+        # SSL verification disabled in Client() constructor
         self.authenticated = False
         self.site_uuid = ""
 
-    def _login(self) -> Optional[requests.Response]:
+    def _login(self) -> Optional[httpx.Response]:
         """Helper function to authenticate and populate headers"""
         auth_payload = {
             "userName": self.username,
@@ -53,7 +53,7 @@ class NDI:
 
     def get_last_epoch_id(
         self, name: str, site: str
-    ) -> Tuple[Optional[requests.Response], Optional[str]]:
+    ) -> Tuple[Optional[httpx.Response], Optional[str]]:
         """Get last epoch ID of assurance group"""
         if not self.authenticated:
             err = self._login()
@@ -80,7 +80,7 @@ class NDI:
 
     def start_pcv(
         self, name: str, group: str, site: str, json_data: str
-    ) -> Tuple[Optional[requests.Response], Optional[str]]:
+    ) -> Tuple[Optional[httpx.Response], Optional[str]]:
         """Start pre-change validation and return job ID"""
         if not self.authenticated:
             err = self._login()
@@ -125,7 +125,7 @@ class NDI:
 
     def wait_pcv(
         self, group: str, site: str, job_id: str
-    ) -> Tuple[Optional[requests.Response], Optional[str]]:
+    ) -> Tuple[Optional[httpx.Response], Optional[str]]:
         """Wair for pre-change validation to complete and return epoch job ID"""
         if not self.authenticated:
             err = self._login()
@@ -169,7 +169,7 @@ class NDI:
 
     def get_pcv_results(
         self, group: str, site: str, epoch_job_id: str, suppress_events: str
-    ) -> Tuple[Optional[requests.Response], Optional[List[Any]]]:
+    ) -> Tuple[Optional[httpx.Response], Optional[List[Any]]]:
         """Retrieve pre-change validation results"""
         if not self.authenticated:
             err = self._login()
@@ -214,7 +214,7 @@ class NDI:
             )
         return None, event_list
 
-    def get_pcv_url(self) -> Tuple[Optional[requests.Response], Optional[str]]:
+    def get_pcv_url(self) -> Tuple[Optional[httpx.Response], Optional[str]]:
         """Get URL pointing to pre-change validation results"""
         if not self.authenticated:
             err = self._login()

@@ -7,8 +7,7 @@ import logging
 import re
 from typing import Any, Dict, List, Optional, Tuple
 
-import requests
-import urllib3
+import httpx
 import yaml
 
 from .apic import ApicObject
@@ -29,7 +28,6 @@ class PCV:
     ):
         self.ndi = NDI(hostname_ip, username, password, domain, timeout)
         self.root = ApicObject("root", {}, [], None)
-        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
     def _resolve_tf_classnames(self, root: ApicObject, tf_plan: Any) -> None:
         """Helper function to resolve missing class names and key attributes using the Terraform plan"""
@@ -186,7 +184,7 @@ class PCV:
         suppress_events: str,
         file_summary: str,
         file_url: str,
-    ) -> Tuple[Optional[requests.Response], Optional[List[Any]], Optional[str]]:
+    ) -> Tuple[Optional[httpx.Response], Optional[List[Any]], Optional[str]]:
         """Trigger an NDI pre-change validation"""
         if not len(self.root.children):
             logger.info("No updates planned. No need to trigger a pre-change analysis.")
