@@ -12,8 +12,7 @@ maintainers = [
     { name = "Daniel Schmidt", email = "danischm@cisco.com" },
 ]
 dependencies = [
-    "click>=8.2",
-    "errorhandler>=2.0.1",
+    "typer>=0.15",
     "pyyaml>=6.0.2",
     "requests>=2.32",
 ]
@@ -24,7 +23,7 @@ repository = "https://github.com/netascode/nexus-pcv"
 documentation = "https://github.com/netascode/nexus-pcv"
 
 [project.scripts]
-nexus-pcv = "nexus_pcv.cli.main:main"
+nexus-pcv = "nexus_pcv.cli.main:app"
 
 [project.optional-dependencies]
 dev = [

@@ -2,157 +2,150 @@
 
 # Copyright: (c) 2022, Daniel Schmidt <danischm@cisco.com>
 
-from typing import Any, List, Mapping, Tuple
+from typing import List, Optional, Annotated
+from pathlib import Path
+import typer
 
-import click
+# Typer Option definitions for the CLI
 
-
-class MutuallyExclusiveOption(click.Option):
-    def __init__(self, *args: Any, **kwargs: Any):
-        self.mutually_exclusive = set(kwargs.pop("mutually_exclusive", []))
-        help = kwargs.get("help", "")
-        if self.mutually_exclusive:
-            ex_str = ", ".join(self.mutually_exclusive)
-            kwargs["help"] = help + (
-                " NOTE: This argument is mutually exclusive with "
-                " arguments: [" + ex_str + "]."
-            )
-        super(MutuallyExclusiveOption, self).__init__(*args, **kwargs)
-
-    def handle_parse_result(
-        self, ctx: click.Context, opts: Mapping[str, Any], args: List[str]
-    ) -> Tuple[Any, List[str]]:
-        if self.mutually_exclusive.intersection(opts) and self.name in opts:
-            raise click.UsageError(
-                "Illegal usage: `{}` is mutually exclusive with "
-                "arguments `{}`.".format(self.name, ", ".join(self.mutually_exclusive))
-            )
-
-        return super(MutuallyExclusiveOption, self).handle_parse_result(ctx, opts, args)
-
-
-hostname_ip = click.option(
+hostname_ip = typer.Option(
+    ...,
     "-i",
     "--hostname-ip",
-    type=str,
     envvar="PCV_HOSTNAME_IP",
-    help="ND hostname or IP (required, env: PCV_HOSTNAME_IP).",
-    required=True,
+    help="ND hostname or IP.",
 )
 
-username = click.option(
+username = typer.Option(
+    ...,
     "-u",
     "--username",
-    type=str,
     envvar="PCV_USERNAME",
-    help="ND username (required, env: PCV_USERNAME).",
-    required=True,
+    help="ND username.",
 )
 
-password = click.option(
+password = typer.Option(
+    ...,
     "-p",
     "--password",
-    type=str,
     envvar="PCV_PASSWORD",
-    help="ND password (required, env: PCV_PASSWORD).",
     prompt=True,
     hide_input=True,
     confirmation_prompt=True,
-    required=True,
+    help="ND password.",
 )
 
-domain = click.option(
-    "-d",
-    "--domain",
-    type=str,
-    default="local",
-    envvar="PCV_DOMAIN",
-    help="ND login domain (optional, default: 'local', env: PCV_DOMAIN).",
-    required=False,
-)
-
-group = click.option(
-    "-g",
-    "--group",
-    type=str,
-    default="default",
-    envvar="PCV_GROUP",
-    help="NDI insights group name (optional, default: 'default', env: PCV_GROUP).",
-    required=False,
-)
-
-site = click.option(
+site = typer.Option(
+    ...,
     "-s",
     "--site",
-    type=str,
     envvar="PCV_SITE",
-    help="NDI site or fabric name (required, env: PCV_SITE).",
-    required=True,
+    help="NDI site or fabric name.",
 )
 
-name = click.option(
+name = typer.Option(
+    ...,
     "-n",
     "--name",
-    type=str,
     envvar="PCV_NAME",
-    help="NDI pre-change validation name (required, env: PCV_NAME).",
-    required=True,
+    help="NDI pre-change validation name.",
 )
 
-timeout = click.option(
+domain = typer.Option(
+    "local",
+    "-d",
+    "--domain",
+    envvar="PCV_DOMAIN",
+    help="ND login domain.",
+)
+
+group = typer.Option(
+    "default",
+    "-g",
+    "--group",
+    envvar="PCV_GROUP",
+    help="NDI insights group name.",
+)
+
+timeout = typer.Option(
+    15,
     "--timeout",
-    type=int,
-    default=15,
     envvar="PCV_TIMEOUT",
-    help="NDI pre-change validation timeout in minutes (optional, default: 15, env: PCV_TIMEOUT).",
-    required=False,
+    help="NDI pre-change validation timeout in minutes.",
 )
 
-suppress_events = click.option(
+suppress_events = typer.Option(
+    "APP_EPG_NOT_DEPLOYED,APP_EPG_HAS_NO_CONTRACT_IN_ENFORCED_VRF",
     "--suppress-events",
-    type=str,
     envvar="PCV_SUPPRESS_EVENTS",
-    default="APP_EPG_NOT_DEPLOYED,APP_EPG_HAS_NO_CONTRACT_IN_ENFORCED_VRF",
-    help="NDI comma-separated list of events to suppress (optional, default: 'APP_EPG_NOT_DEPLOYED,APP_EPG_HAS_NO_CONTRACT_IN_ENFORCED_VRF', env: PCV_SUPPRESS_EVENTS).",
-    required=False,
+    help="NDI comma-separated list of events to suppress.",
 )
 
-
-file = click.option(
+file = typer.Option(
+    None,
     "-f",
     "--file",
-    cls=MutuallyExclusiveOption,
-    type=click.Path(exists=True, dir_okay=False, file_okay=True),
-    multiple=True,
     envvar="PCV_FILE",
-    help="NDI proposed change JSON file (optional, env: PCV_FILE).",
-    required=False,
+    help="NDI proposed change JSON file.",
+    exists=True,
+    file_okay=True,
+    dir_okay=False,
 )
 
-nac_tf_plan = click.option(
+nac_tf_plan = typer.Option(
+    None,
     "-t",
     "--nac-tf-plan",
-    cls=MutuallyExclusiveOption,
-    type=click.Path(exists=True, dir_okay=False, file_okay=True),
     envvar="PCV_NAC_TF_PLAN",
-    help="NDI proposed change Terraform plan output (optional, env: PCV_NAC_TF_PLAN).",
-    required=False,
+    help="NDI proposed change Terraform plan output.",
+    exists=True,
+    file_okay=True,
+    dir_okay=False,
 )
 
-output_summary = click.option(
+output_summary = typer.Option(
+    None,
     "-o",
     "--output-summary",
-    type=click.Path(exists=False, dir_okay=False, file_okay=True),
     envvar="PCV_OUTPUT_SUMMARY",
-    help="NDI summary of new events/anomalies written to a file (optional, env: PCV_OUTPUT_SUMMARY).",
-    required=False,
+    help="NDI summary of new events/anomalies written to a file.",
+    file_okay=True,
+    dir_okay=False,
 )
 
-output_url = click.option(
+output_url = typer.Option(
+    None,
     "-r",
     "--output-url",
-    type=click.Path(exists=False, dir_okay=False, file_okay=True),
     envvar="PCV_OUTPUT_URL",
-    help="NDI link (URL) to pre-change validation results written to a file (optional, env: PCV_OUTPUT_URL).",
-    required=False,
+    help="NDI link (URL) to pre-change validation results written to a file.",
+    file_okay=True,
+    dir_okay=False,
 )
+
+verbosity = typer.Option(
+    "WARNING",
+    "-v",
+    "--verbosity",
+    help="Either CRITICAL, ERROR, WARNING, INFO or DEBUG.",
+)
+
+# version option handled directly in main.py due to callback requirements
+
+# Type annotations for function parameters
+
+HostnameIp = Annotated[str, hostname_ip]
+Username = Annotated[str, username]
+Password = Annotated[str, password]
+Site = Annotated[str, site]
+Name = Annotated[str, name]
+Domain = Annotated[str, domain]
+Group = Annotated[str, group]
+Timeout = Annotated[int, timeout]
+SuppressEvents = Annotated[str, suppress_events]
+File = Annotated[Optional[List[Path]], file]
+NacTfPlan = Annotated[Optional[Path], nac_tf_plan]
+OutputSummary = Annotated[Optional[Path], output_summary]
+OutputUrl = Annotated[Optional[Path], output_url]
+Verbosity = Annotated[str, verbosity]
+# Version handled directly in main.py

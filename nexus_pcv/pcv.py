@@ -95,7 +95,9 @@ class PCV:
     def _check_classes(self, root: ApicObject) -> None:
         """Helper function to verify if all objects have classnames"""
         if root.cl is None:
-            logger.error("Missing classname for '{}'".format(root["dn"]))
+            error_msg = "Missing classname for '{}'".format(root["dn"])
+            logger.error(error_msg)
+            raise ValueError(error_msg)
         for child in root.children:
             self._check_classes(child)
 
@@ -125,16 +127,22 @@ class PCV:
                     else:
                         obj = self._load_json_objects(inv)
                         self.root.insert(obj)
-            except:  # noqa E722
+            except Exception as e:
                 logger.error("Failed to load JSON file: {}".format(filename))
+                raise RuntimeError(f"Failed to load JSON file '{filename}': {e}") from e
         self._resolve_static_classnames(self.root)
         self._check_classes(self.root)
 
     def load_tf_plan(self, filename: str) -> None:
         """Load changed objects from Terraform plan into object tree"""
-        tf_plan = None
-        with open(filename) as file:
-            tf_plan = json.load(file)
+        try:
+            with open(filename) as file:
+                tf_plan = json.load(file)
+        except Exception as e:
+            logger.error("Failed to load Terraform plan file: {}".format(filename))
+            raise RuntimeError(
+                f"Failed to load Terraform plan file '{filename}': {e}"
+            ) from e
 
         for change in tf_plan.get("resource_changes", []):
             if change.get("type") == "aci_rest_managed":

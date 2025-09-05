@@ -4,19 +4,21 @@
 
 import logging
 import sys
-from typing import List
+from typing import List, Optional
+from pathlib import Path
 
-import click
-import errorhandler
+import typer
 
 import nexus_pcv
 from nexus_pcv.pcv import PCV
-
 from . import options
 
 logger = logging.getLogger(__name__)
 
-error_handler = errorhandler.ErrorHandler()
+app = typer.Typer(
+    help="A CLI tool to perform a pre-change validation on Nexus Dashboard Insights.",
+    add_completion=False,
+)
 
 
 def configure_logging(level: str) -> None:
@@ -37,62 +39,58 @@ def configure_logging(level: str) -> None:
     logger.setLevel(lev)
 
 
-@click.command(context_settings=dict(help_option_names=["-h", "--help"]))
-@click.version_option(nexus_pcv.__version__)
-@click.option(
-    "-v",
-    "--verbosity",
-    metavar="LVL",
-    is_eager=True,
-    type=click.Choice(["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"]),
-    help="Either CRITICAL, ERROR, WARNING, INFO or DEBUG.",
-    default="WARNING",
-)
-@options.hostname_ip
-@options.username
-@options.password
-@options.domain
-@options.group
-@options.site
-@options.name
-@options.suppress_events
-@options.timeout
-@options.file
-@options.nac_tf_plan
-@options.output_summary
-@options.output_url
+def version_callback(value: bool) -> None:
+    if value:
+        typer.echo(f"nexus-pcv version {nexus_pcv.__version__}")
+        raise typer.Exit()
+
+
+@app.command()
 def main(
-    verbosity: str,
-    hostname_ip: str,
-    username: str,
-    password: str,
-    domain: str,
-    group: str,
-    site: str,
-    name: str,
-    suppress_events: str,
-    timeout: int,
-    file: List[str],
-    nac_tf_plan: str,
-    output_summary: str,
-    output_url: str,
+    hostname_ip: str = options.hostname_ip,
+    username: str = options.username,
+    password: str = options.password,
+    site: str = options.site,
+    name: str = options.name,
+    domain: str = options.domain,
+    group: str = options.group,
+    timeout: int = options.timeout,
+    suppress_events: str = options.suppress_events,
+    file: Optional[List[Path]] = options.file,
+    nac_tf_plan: Optional[Path] = options.nac_tf_plan,
+    output_summary: Optional[Path] = options.output_summary,
+    output_url: Optional[Path] = options.output_url,
+    verbosity: str = options.verbosity,
+    version: bool = typer.Option(
+        False,
+        "--version",
+        callback=version_callback,
+        is_eager=True,
+        help="Show the version and exit.",
+    ),
 ) -> None:
     """A CLI tool to perform a pre-change validation on Nexus Dashboard Insights."""
     configure_logging(verbosity)
 
-    pcv = PCV(hostname_ip, username, password, domain, timeout)
-    if file:
-        pcv.load_json_files(file)
-    if nac_tf_plan:
-        pcv.load_tf_plan(nac_tf_plan)
-    if error_handler.fired:
-        exit()
-    pcv.ndi_pcv(name, group, site, suppress_events, output_summary, output_url)
-    exit()
+    try:
+        pcv = PCV(hostname_ip, username, password, domain, timeout)
 
+        # Load files if provided
+        if file:
+            pcv.load_json_files([str(f) for f in file])
+        if nac_tf_plan:
+            pcv.load_tf_plan(str(nac_tf_plan))
 
-def exit() -> None:
-    if error_handler.fired:
-        sys.exit(1)
-    else:
-        sys.exit(0)
+        # Run the pre-change validation
+        pcv.ndi_pcv(
+            name,
+            group,
+            site,
+            suppress_events,
+            str(output_summary) if output_summary else "",
+            str(output_url) if output_url else "",
+        )
+
+    except Exception as e:
+        logger.error(f"Error during execution: {e}")
+        raise typer.Exit(code=1)
