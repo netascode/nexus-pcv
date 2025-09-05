@@ -1,5 +1,5 @@
 [![Tests](https://github.com/netascode/nexus-pcv/actions/workflows/test.yml/badge.svg)](https://github.com/netascode/nexus-pcv/actions/workflows/test.yml)
-![Python Support](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-informational "Python Support: 3.8, 3.9, 3.10, 3.11, 3.12")
+![Python Support](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-informational "Python Support: 3.10, 3.11, 3.12, 3.13")
 
 # nexus-pcv
 
@@ -46,12 +46,18 @@ Options:
 
 ## Installation
 
-Python 3.7+ is required to install `nexus-pcv`. Don't have Python 3.7 or later? See [Python 3 Installation & Setup Guide](https://realpython.com/installing-python/).
+Python 3.10+ is required to install `nexus-pcv`. Don't have Python 3.10 or later? See [Python 3 Installation & Setup Guide](https://realpython.com/installing-python/).
 
-`nexus-pcv` can be installed in a virtual environment using `pip`:
+`nexus-pcv` can be installed using `pip`:
 
 ```
 pip install nexus-pcv
+```
+
+or using [uv](https://docs.astral.sh/uv/):
+
+```
+uv tool install nexus-pcv
 ```
 
 ## CI/CD Integration

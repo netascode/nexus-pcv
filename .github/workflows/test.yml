@@ -15,19 +15,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Python Setup
-        uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
-          python-version: "3.11"
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.11
 
       - name: Pre-commit Checks
         uses: pre-commit/action@v3.0.1
 
       - name: Type Checks
         run: |
-          pip install poetry
-          poetry install
-          poetry run mypy nexus_pcv
+          uv sync --extra dev
+          uv run mypy nexus_pcv
 
   test:
     name: Tests
@@ -36,25 +38,26 @@ jobs:
     strategy:
       matrix:
         python:
-          - "3.8"
-          - "3.9"
           - "3.10"
           - "3.11"
           - "3.12"
+          - "3.13"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Python Setup
-        uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
-          python-version: ${{ matrix.python }}
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install ${{ matrix.python }}
 
       - name: Test
         run: |
-          pip install poetry
-          poetry install
-          poetry run pytest
+          uv sync --extra dev
+          uv run pytest
 
   notification:
     name: Notification
