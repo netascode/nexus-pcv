@@ -1,11 +1,9 @@
-# -*- coding: utf-8 -*-
-
 # Copyright: (c) 2022, Daniel Schmidt <danischm@cisco.com>
 
-from typing import Any, Dict
+from typing import Any
 
 # Map of RN prefixes and its corresponding class name and key attributes
-RN_PREFIX_CLASSNAME_MAPPINGS: Dict[str, Dict[str, Any]] = {
+RN_PREFIX_CLASSNAME_MAPPINGS: dict[str, dict[str, Any]] = {
     "uni": {
         "class": "polUni",
     },

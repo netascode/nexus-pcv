@@ -1,16 +1,14 @@
-# -*- coding: utf-8 -*-
-
 # Copyright: (c) 2022, Daniel Schmidt <danischm@cisco.com>
 
 import logging
 import sys
-from typing import List, Optional
 from pathlib import Path
 
 import typer
 
 import nexus_pcv
 from nexus_pcv.pcv import PCV
+
 from . import options
 
 logger = logging.getLogger(__name__)
@@ -56,10 +54,10 @@ def main(
     group: str = options.group,
     timeout: int = options.timeout,
     suppress_events: str = options.suppress_events,
-    file: Optional[List[Path]] = options.file,
-    nac_tf_plan: Optional[Path] = options.nac_tf_plan,
-    output_summary: Optional[Path] = options.output_summary,
-    output_url: Optional[Path] = options.output_url,
+    file: list[Path] | None = options.file,
+    nac_tf_plan: Path | None = options.nac_tf_plan,
+    output_summary: Path | None = options.output_summary,
+    output_url: Path | None = options.output_url,
     verbosity: str = options.verbosity,
     version: bool = typer.Option(
         False,
@@ -93,4 +91,4 @@ def main(
 
     except Exception as e:
         logger.error(f"Error during execution: {e}")
-        raise typer.Exit(code=1)
+        raise typer.Exit(code=1) from e

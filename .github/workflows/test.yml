@@ -7,6 +7,30 @@ on:
       - main
 
 jobs:
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Install bandit
+        run: uv tool install bandit[toml]
+
+      - name: Run bandit security scan
+        run: bandit -r nexus_pcv/ -ll -f json -o bandit-security-report.json
+        
+      - name: Upload security report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bandit-security-report
+          path: bandit-security-report.json
+
   lint:
     name: Lint
     runs-on: ubuntu-latest
@@ -17,19 +41,12 @@ jobs:
 
       - name: Install uv
         uses: astral-sh/setup-uv@v6
-        with:
-          enable-cache: true
 
-      - name: Set up Python
-        run: uv python install 3.11
+      - name: Install mypy
+        run: uv tool install mypy
 
       - name: Pre-commit Checks
         uses: pre-commit/action@v3.0.1
-
-      - name: Type Checks
-        run: |
-          uv sync --extra dev
-          uv run mypy nexus_pcv
 
   test:
     name: Tests
@@ -62,13 +79,13 @@ jobs:
   notification:
     name: Notification
     if: always() && github.event_name != 'pull_request'
-    needs: [lint, test]
+    needs: [security, lint, test]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - name: Check Job Success
         run: |
-          if [ ${{ needs.lint.result }} == 'success' ] && [ ${{ needs.test.result }} == 'success' ]; then
+          if [ ${{ needs.security.result }} == 'success' ] && [ ${{ needs.lint.result }} == 'success' ] && [ ${{ needs.test.result }} == 'success' ]; then
             echo "All jobs succeeded"
             echo "jobSuccess=success" >> $GITHUB_ENV
           else

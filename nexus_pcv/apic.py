@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
-
 # Copyright: (c) 2022, Daniel Schmidt <danischm@cisco.com>
 
 import json
 import logging
-from typing import Dict, List, Optional, Union
+from typing import Optional, Union
 
 logger = logging.getLogger(__name__)
 
@@ -12,9 +10,9 @@ logger = logging.getLogger(__name__)
 class ApicObject:
     def __init__(
         self,
-        cl: Optional[str],
-        attributes: Dict[str, str],
-        children: List["ApicObject"],
+        cl: str | None,
+        attributes: dict[str, str],
+        children: list["ApicObject"],
         parent: Optional["ApicObject"],
     ):
         self.cl = cl
@@ -24,8 +22,8 @@ class ApicObject:
 
     def update(
         self,
-        attributes: Dict[str, str],
-        children: List["ApicObject"],
+        attributes: dict[str, str],
+        children: list["ApicObject"],
     ) -> None:
         """Update object attributes, classname and children"""
         self.attributes.update(attributes)
@@ -56,9 +54,9 @@ class ApicObject:
                 ApicObject(child.cl, child.attributes, child.children, self)
             )
 
-    def find(self, dn: str = "", cl: str = "") -> List["ApicObject"]:
+    def find(self, dn: str = "", cl: str = "") -> list["ApicObject"]:
         """Find objects by dn or classname in subtree"""
-        result: List["ApicObject"] = []
+        result: list[ApicObject] = []
         if not dn and not cl:
             return result
         elif not cl:
@@ -113,19 +111,17 @@ class ApicObject:
                     self.insert(new_obj)
 
     def add_child(
-        self, cl: str, attributes: Dict[str, str], children: List["ApicObject"]
+        self, cl: str, attributes: dict[str, str], children: list["ApicObject"]
     ) -> "ApicObject":
         """Add child to object"""
         child = ApicObject(cl, attributes, children, self)
         self.children.append(child)
         return child
 
-    def add_parent(self, cl: str, attributes: Dict[str, str]) -> "ApicObject":
+    def add_parent(self, cl: str, attributes: dict[str, str]) -> "ApicObject":
         """Add parent to object"""
         if self.parent is not None:
-            raise Exception(
-                "ApicObject {} already has a parent.".format(str(ApicObject))
-            )
+            raise Exception(f"ApicObject {str(ApicObject)} already has a parent.")
         self.parent = ApicObject(cl, attributes, [self], None)
         return self.parent
 
@@ -133,7 +129,7 @@ class ApicObject:
         """Get root object"""
         obj = self
         # max search depth 100
-        for i in range(100):
+        for _i in range(100):
             if obj.cl == "root":
                 return obj
             elif obj.parent is not None:
@@ -142,7 +138,7 @@ class ApicObject:
                 return None
         return None
 
-    def __getitem__(self, key: Union[str, int]) -> Union["ApicObject", str, None]:
+    def __getitem__(self, key: str | int) -> Union["ApicObject", str, None]:
         """Get attribute if key is string otherwise child by index"""
         if isinstance(key, str):
             return self.attributes.get(key)
@@ -152,9 +148,7 @@ class ApicObject:
     def __str__(self) -> str:
         """Return json string."""
         attr_string = ", ".join(
-            ['"{}": {}'.format(k, json.dumps(v)) for k, v in self.attributes.items()]
+            [f'"{k}": {json.dumps(v)}' for k, v in self.attributes.items()]
         )
         child_string = ", ".join([str(c) for c in self.children])
-        return '{{"{}": {{"attributes": {{{}}}, "children": [{}]}}}}'.format(
-            self.cl, attr_string, child_string
-        )
+        return f'{{"{self.cl}": {{"attributes": {{{attr_string}}}, "children": [{child_string}]}}}}'

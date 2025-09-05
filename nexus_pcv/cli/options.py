@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
-
 # Copyright: (c) 2022, Daniel Schmidt <danischm@cisco.com>
 
-from typing import List, Optional, Annotated
 from pathlib import Path
+from typing import Annotated
+
 import typer
 
 # Typer Option definitions for the CLI
@@ -143,9 +142,9 @@ Domain = Annotated[str, domain]
 Group = Annotated[str, group]
 Timeout = Annotated[int, timeout]
 SuppressEvents = Annotated[str, suppress_events]
-File = Annotated[Optional[List[Path]], file]
-NacTfPlan = Annotated[Optional[Path], nac_tf_plan]
-OutputSummary = Annotated[Optional[Path], output_summary]
-OutputUrl = Annotated[Optional[Path], output_url]
+File = Annotated[list[Path] | None, file]
+NacTfPlan = Annotated[Path | None, nac_tf_plan]
+OutputSummary = Annotated[Path | None, output_summary]
+OutputUrl = Annotated[Path | None, output_url]
 Verbosity = Annotated[str, verbosity]
 # Version handled directly in main.py

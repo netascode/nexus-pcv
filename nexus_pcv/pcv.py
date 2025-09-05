@@ -1,11 +1,9 @@
-# -*- coding: utf-8 -*-
-
 # Copyright: (c) 2022, Daniel Schmidt <danischm@cisco.com>
 
 import json
 import logging
 import re
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import httpx
 import yaml
@@ -39,18 +37,14 @@ class PCV:
                 )
                 plan_dn = change["change"].get(section, {}).get("dn")
                 if dn == plan_dn:
-                    logger.debug(
-                        "Resolving classname from Terraform plan for '{}'".format(dn)
-                    )
+                    logger.debug(f"Resolving classname from Terraform plan for '{dn}'")
                     root.cl = change["change"].get(section, {}).get("class_name")
                     name = (
                         change["change"].get(section, {}).get("content", {}).get("name")
                     )
                     if name:
                         logger.debug(
-                            "Resolving name attribute from Terraform plan for '{}'".format(
-                                dn
-                            )
+                            f"Resolving name attribute from Terraform plan for '{dn}'"
                         )
                         root.attributes["name"] = name
 
@@ -100,8 +94,8 @@ class PCV:
             self._check_classes(child)
 
     def _load_json_objects(
-        self, json_dict: Dict[Any, Any], parent: Optional[ApicObject] = None
-    ) -> Optional[ApicObject]:
+        self, json_dict: dict[Any, Any], parent: ApicObject | None = None
+    ) -> ApicObject | None:
         """Helper function to load JSON objects into object tree"""
         new_obj = None
         for k, v in json_dict.items():
@@ -112,11 +106,11 @@ class PCV:
                 self._load_json_objects(child, new_obj)
         return new_obj
 
-    def load_json_files(self, filenames: List[str]) -> None:
+    def load_json_files(self, filenames: list[str]) -> None:
         """Load objects from JSON files into object tree"""
         for filename in filenames:
             try:
-                with open(filename, "r") as file:
+                with open(filename) as file:
                     inv = json.loads(file.read())
                     if "imdata" in inv:
                         for item in inv["imdata"]:
@@ -126,7 +120,7 @@ class PCV:
                         obj = self._load_json_objects(inv)
                         self.root.insert(obj)
             except Exception as e:
-                logger.error("Failed to load JSON file: {}".format(filename))
+                logger.error(f"Failed to load JSON file: {filename}")
                 raise RuntimeError(f"Failed to load JSON file '{filename}': {e}") from e
         self._resolve_static_classnames(self.root)
         self._check_classes(self.root)
@@ -137,7 +131,7 @@ class PCV:
             with open(filename) as file:
                 tf_plan = json.load(file)
         except Exception as e:
-            logger.error("Failed to load Terraform plan file: {}".format(filename))
+            logger.error(f"Failed to load Terraform plan file: {filename}")
             raise RuntimeError(
                 f"Failed to load Terraform plan file '{filename}': {e}"
             ) from e
@@ -168,7 +162,7 @@ class PCV:
         self._resolve_tf_classnames(self.root, tf_plan)
         self._check_classes(self.root)
 
-    def _write_pcv_events(self, events: List[Any], file: str) -> None:
+    def _write_pcv_events(self, events: list[Any], file: str) -> None:
         with open(file, "w") as fh:
             fh.write(yaml.dump(events, default_flow_style=False))
 
@@ -184,12 +178,12 @@ class PCV:
         suppress_events: str,
         file_summary: str,
         file_url: str,
-    ) -> Tuple[Optional[httpx.Response], Optional[List[Any]], Optional[str]]:
+    ) -> tuple[httpx.Response | None, list[Any] | None, str | None]:
         """Trigger an NDI pre-change validation"""
         if not len(self.root.children):
             logger.info("No updates planned. No need to trigger a pre-change analysis.")
             return None, None, None
-        logger.debug("Proposed change (JSON): {}".format(self.root[0]))
+        logger.debug(f"Proposed change (JSON): {self.root[0]}")
         err, job_id = self.ndi.start_pcv(name, group, site, str(self.root[0]))
         if err is not None:
             return err, None, None
