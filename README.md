@@ -5,6 +5,8 @@
 
 A modern CLI tool to perform a pre-change validation on Nexus Dashboard Insights. It can either work with provided JSON file(s) or a `terraform plan` output from a [Network as Code](https://netascode.cisco.com) project. It waits for the analysis to complete and evaluates the results.
 
+Nexus Dashboard 2.x, 3.x and 4.x are supported. The release is detected automatically at startup and the matching API is used.
+
 ```
 $ nexus-pcv --help
 Usage: nexus-pcv [OPTIONS]                                                     
@@ -78,6 +80,13 @@ uv tool install nexus-pcv
 ## CI/CD Integration
 
 The tool can easily be integrated with CI/CD workflows. Arguments can either be provided via command line or environment variables. The tool will exit with a non-zero exit code in case of an error or non-suppressed events being discovered during the pre-change analysis. The `--output-summary` and `--output-url` arguments can be used to write a summary and/or a link (URL) to a file, which can then be embedded into notifications (e.g., Webex).
+
+`--output-summary` always writes a file when the argument is given, including on a clean run, so a missing file signals a broken pipeline rather than a passing check.
+
+### What counts as a failure
+
+Only anomalies *introduced by the proposed change* fail the run. Anomalies that already existed on the baseline snapshot are reported by the Nexus Dashboard UI but are deliberately ignored here, since they are not caused by the change being validated. This means the UI can show violations — compliance ones in particular — for a run that `nexus-pcv` exits 0 on. Anomalies with `info` severity and any mnemonic listed in `--suppress-events` are ignored as well.
+
 
 ## *Network as Code* Integration
 

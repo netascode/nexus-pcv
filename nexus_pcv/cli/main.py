@@ -1,4 +1,5 @@
 # Copyright: (c) 2022, Daniel Schmidt <danischm@cisco.com>
+# Copyright: (c) 2026, Noppanut Ploywong <nploywon@cisco.com>
 
 import logging
 import sys
@@ -80,7 +81,7 @@ def main(
             pcv.load_tf_plan(str(nac_tf_plan))
 
         # Run the pre-change validation
-        pcv.ndi_pcv(
+        err, events, url = pcv.ndi_pcv(
             name,
             group,
             site,
@@ -89,6 +90,13 @@ def main(
             str(output_url) if output_url else "",
         )
 
+        if err is not None:
+            raise typer.Exit(code=1)
+        if events:
+            raise typer.Exit(code=1)
+
+    except typer.Exit:
+        raise
     except Exception as e:
         logger.error(f"Error during execution: {e}")
         raise typer.Exit(code=1) from e

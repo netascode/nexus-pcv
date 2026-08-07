@@ -1,4 +1,5 @@
 # Copyright: (c) 2022, Daniel Schmidt <danischm@cisco.com>
+# Copyright: (c) 2026, Noppanut Ploywong <nploywon@cisco.com>
 
 import json
 import logging
@@ -10,7 +11,7 @@ import yaml
 
 from .apic import ApicObject
 from .const import RN_PREFIX_CLASSNAME_MAPPINGS
-from .ndi import NDI
+from .nd import create_backend
 
 logger = logging.getLogger(__name__)
 
@@ -23,8 +24,11 @@ class PCV:
         password: str,
         domain: str,
         timeout: int,
+        force_version: int | None = None,
     ):
-        self.ndi = NDI(hostname_ip, username, password, domain, timeout)
+        self.backend = create_backend(
+            hostname_ip, username, password, domain, timeout, force_version
+        )
         self.root = ApicObject("root", {}, [], None)
 
     def _resolve_tf_classnames(self, root: ApicObject, tf_plan: Any) -> None:
@@ -164,7 +168,10 @@ class PCV:
 
     def _write_pcv_events(self, events: list[Any], file: str) -> None:
         with open(file, "w") as fh:
-            fh.write(yaml.dump(events, default_flow_style=False))
+            if events:
+                fh.write(yaml.dump(events, default_flow_style=False))
+            else:
+                fh.write("No new anomalies raised by the proposed change.\n")
 
     def _write_pcv_url(self, url: str, file: str) -> None:
         with open(file, "w") as fh:
@@ -181,25 +188,27 @@ class PCV:
     ) -> tuple[httpx.Response | None, list[Any] | None, str | None]:
         """Trigger an NDI pre-change validation"""
         if not len(self.root.children):
-            logger.info("No updates planned. No need to trigger a pre-change analysis.")
+            logger.warning(
+                "No updates planned. No need to trigger a pre-change analysis."
+            )
+            if file_summary:
+                self._write_pcv_events([], file_summary)
             return None, None, None
         logger.debug(f"Proposed change (JSON): {self.root[0]}")
-        err, job_id = self.ndi.start_pcv(name, group, site, str(self.root[0]))
+        err, job_id = self.backend.start_pcv(name, group, site, str(self.root[0]))
         if err is not None:
             return err, None, None
-        err, epoch_job_id = self.ndi.wait_pcv(group, site, str(job_id))
+        err, ctx = self.backend.wait_pcv(group, site, str(job_id))
+        if err is not None or ctx is None:
+            return err, None, None
+        err, events = self.backend.get_pcv_results(group, site, ctx, suppress_events)
         if err is not None:
             return err, None, None
-        err, events = self.ndi.get_pcv_results(
-            group, site, str(epoch_job_id), suppress_events
-        )
+        err, url = self.backend.get_pcv_url(site, str(job_id), ctx)
         if err is not None:
             return err, None, None
-        err, url = self.ndi.get_pcv_url()
-        if err is not None:
-            return err, None, None
-        if file_summary and events:
-            self._write_pcv_events(events, file_summary)
+        if file_summary:
+            self._write_pcv_events(events or [], file_summary)
         if file_url and url is not None:
             self._write_pcv_url(url, file_url)
         return None, events, url

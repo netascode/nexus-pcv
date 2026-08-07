@@ -1,3 +1,11 @@
+# Unreleased
+
+- Add support for Nexus Dashboard 4.x, detected automatically via `/version.json`
+- Fix exit code not reflecting discovered anomalies (the result of the analysis was discarded)
+- Fix `--output-summary` not writing a file on a clean run or when no changes are planned
+- Log "No updates planned" at warning level so it is visible at the default verbosity
+- Fix a pre-change analysis timeout being reported as a successful run
+
 # 0.2.1
 
 - Fix issue with Terraform resource attributes set to `null`
